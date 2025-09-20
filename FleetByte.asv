@@ -130,6 +130,8 @@ function [xyzRMS,velRMS,angRMS,hrRMS]=FleetByte(secs, map, deb)
 close all;
 %%%%%%%%%% YOU CAN ADD ANY VARIABLES YOU MAY NEED BETWEEN THIS LINE... %%%%%%%%%%%%%%%%%
 
+
+prev_xyz = [0,0,0]
 %%%%%%%%%% ... AND THIS LINE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 idx=1;
@@ -285,16 +287,25 @@ end
 alpha_now = 0.7;        % 当前测量的权重（你要的 0.7）
 alpha_prev = 1 - alpha_now;   % 上一帧估计的权重（=0.3）
 
-persistent xyz_prev 
+% persistent xyz_prev 
+% 
+% if idx ==1
+%     xyz = MPS
+%     % Initialize previous position if it's the first iteration
+%     xyz_prev = xyz;  % Store current position for next iteration
+% else
+%     xyz = alpha_now * MPS + alpha_prev * xyz_prev;  % Update current position estimate
+%     xyz_prev = xyz;  % Store current position for next iteration
+% end;
+xyz = MPS
 
-if idx ==1
-    xyz = MPS
-    % Initialize previous position if it's the first iteration
-    xyz_prev = xyz;  % Store current position for next iteration
-else
-    xyz = alpha_now * MPS + alpha_prev * xyz_prev;  % Update current position estimate
-    xyz_prev = xyz;  % Store current position for next iteration
-end;
+
+if
+
+% 假设 xyz = [x y z]
+xyz(1) = max(1, min(512, xyz(1)));   % 限制 x 在 [1,512]
+xyz(2) = max(1, min(512, xyz(2)));   % 限制 y 在 [1,512]
+xyz(3) = max(0, xyz(3));             % 限制 z >= 0
 
 
 
