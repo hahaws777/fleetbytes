@@ -285,16 +285,16 @@ end
 alpha_now = 0.7;        % 当前测量的权重（你要的 0.7）
 alpha_prev = 1 - alpha_now;   % 上一帧估计的权重（=0.3）
 
-% persistent xyz_prev 
-% 
-% if idx ==1
-%     xyz = MPS
-%     % Initialize previous position if it's the first iteration
-%     xyz_prev = xyz;  % Store current position for next iteration
-% else
-%     xyz = alpha_now * MPS + alpha_prev * xyz_prev;  % Update current position estimate
-%     xyz_prev = xyz;  % Store current position for next iteration
-% end;
+persistent xyz_prev 
+
+if idx ==1
+    xyz = MPS
+    % Initialize previous position if it's the first iteration
+    xyz_prev = xyz;  % Store current position for next iteration
+else
+    xyz = alpha_now * MPS + alpha_prev * xyz_prev;  % Update current position estimate
+    xyz_prev = xyz;  % Store current position for next iteration
+end;
 
 
 
