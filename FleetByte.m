@@ -131,13 +131,26 @@ close all;
 %%%%%%%%%% YOU CAN ADD ANY VARIABLES YOU MAY NEED BETWEEN THIS LINE... %%%%%%%%%%%%%%%%%
 
 
-prev_xyz = [0,0,0]
+prev_xyz = [256 256 .5]
+
+vel_prev = 0
+
+Rg_lp =0
+
+theta_prev = 0
+pos_for_dir =[0,0,0]
+
+
+
 %%%%%%%%%% ... AND THIS LINE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 idx=1;
 while(idx<=secs)               %% Main simulation loop
 
  [MPS,HRS,Rg]=Sim1(map);       % Simulates 1-second of running and returns the sensor readings
+
+
+
                          
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % TO DO:
@@ -248,9 +261,9 @@ if numel(locs) >= 2               % 至少要有两个峰才能计算 RR 间期
     medRR = median(RR);
     fixedRR = [];
     for i = 1:numel(RR)
-        if RR(i) > 1.5*medRR & RR(i) <2.4*medRR
+        if RR(i) > 1.5*medRR & RR(i) <2.5*medRR
             fixedRR = [fixedRR, RR(i)/2, RR(i)/2];  % 拆成两个
-        elseif RR(i) >2.4*medRR
+        elseif RR(i) >2.5*medRR
             fixedRR = [fixedRR, RR(i)/3,RR(i)/3, RR(i)/3]; % 拆成三个
         else
             fixedRR = [fixedRR, RR(i)];
@@ -289,14 +302,12 @@ alpha_prev = 1 - alpha_now;   % 上一帧估计的权重（=0.3）
 
 xyz = MPS
 
+prev_xyz2 = prev_xyz % used for calculating the velocity
 
-if (idx ==1)
-    xyz = MPS;  % Initialize current position with MPS for the first iteration
-    xyz_prev = xyz;  % Store current position for the next iteration
-else
-    xyz = alpha_now * MPS + alpha_prev * xyz_prev;  % Update current position estimate
-    xyz_prev = xyz
-end 
+
+
+xyz = alpha_now * MPS + alpha_prev * prev_xyz;  % Update current position estimate
+prev_xyz = xyz;
 
 
 
@@ -308,7 +319,69 @@ xyz(3) = max(0, xyz(3));             % 限制 z >= 0
 % done with the xyz calculating
 
 
-% % % doing calculations on the 
+%%% doing the calculation on the direction
+
+
+% % % doing calculations on the velocity
+
+alpha_vel = 0.8
+alpha_vel_prev = 1-alpha_vel
+
+if idx ==1
+    vel = norm(xyz(1:2) - prev_xyz2(1:2))
+else
+    vel = alpha_vel * vel + alpha_vel_prev * norm(xyz(1:2) - prev_xyz2(1:2));  % Update velocity estimate
+end
+vel = vel *3.6
+vel_prev = vel
+
+
+%%% end of calculating velocity
+
+%%% CALCULATION FOR the angle
+
+alpha_rg = 0.2;
+alpha_rg_prev = 1 - alpha_rg;
+
+if isempty(Rg_lp), Rg_lp = Rg; end
+Rg_lp = alpha_rg*Rg + (1-alpha_rg)*Rg_lp;
+
+
+% ===== Direction estimation (complementary fusion) =====
+gamma_yaw = 0.35;    % 越大越信位移方向（0.2~0.5）
+min_step  = 0.25;    % 只有位移>0.25m才纠偏，防抖动误导
+
+if idx ==0
+    theta_prev = 0;
+    pos_for_dir = xyz;
+end
+
+
+
+% 1) 陀螺积分（短期基准）
+theta_gyro = theta_prev + Rg_lp;
+theta_gyro = atan2(sin(theta_gyro), cos(theta_gyro));  % wrap 到 [-pi,pi]
+
+% 2) 位移角（长期参考，只在移动够大时使用）
+disp_vec = xyz(1:2) - pos_for_dir(1:2);
+if norm(disp_vec) > min_step
+    theta_disp = atan2(disp_vec(2), disp_vec(1));
+    % 在圆上做加权平均（避免角度跳变问题）
+    theta = atan2( ...
+              (1-gamma_yaw)*sin(theta_gyro) + gamma_yaw*sin(theta_disp), ...
+              (1-gamma_yaw)*cos(theta_gyro) + gamma_yaw*cos(theta_disp) );
+    pos_for_dir = xyz;                 % 只有纠偏时才更新锚点
+else
+    theta = theta_gyro;
+end
+
+% 3) 输出单位方向向量
+di = [cos(theta)  sin(theta)];
+theta_prev = theta;
+
+
+
+
 
 
  

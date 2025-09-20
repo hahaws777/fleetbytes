@@ -131,13 +131,23 @@ close all;
 %%%%%%%%%% YOU CAN ADD ANY VARIABLES YOU MAY NEED BETWEEN THIS LINE... %%%%%%%%%%%%%%%%%
 
 
-prev_xyz = [0,0,0]
+prev_xyz = [256 256 .5]
+
+vel_prev = 0
+
+Rg_lp
+
+
+
 %%%%%%%%%% ... AND THIS LINE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 idx=1;
 while(idx<=secs)               %% Main simulation loop
 
  [MPS,HRS,Rg]=Sim1(map);       % Simulates 1-second of running and returns the sensor readings
+
+
+
                          
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % TO DO:
@@ -248,9 +258,9 @@ if numel(locs) >= 2               % 至少要有两个峰才能计算 RR 间期
     medRR = median(RR);
     fixedRR = [];
     for i = 1:numel(RR)
-        if RR(i) > 1.5*medRR & RR(i) <2.4*medRR
+        if RR(i) > 1.5*medRR & RR(i) <2.5*medRR
             fixedRR = [fixedRR, RR(i)/2, RR(i)/2];  % 拆成两个
-        elseif RR(i) >2.4*medRR
+        elseif RR(i) >2.5*medRR
             fixedRR = [fixedRR, RR(i)/3,RR(i)/3, RR(i)/3]; % 拆成三个
         else
             fixedRR = [fixedRR, RR(i)];
@@ -284,28 +294,56 @@ end
 
 %%% starting with the xyz calculation
 
-alpha_now = 0.7;        % 当前测量的权重（你要的 0.7）
+alpha_now = 0.8;        % 当前测量的权重（你要的 0.7）
 alpha_prev = 1 - alpha_now;   % 上一帧估计的权重（=0.3）
 
-% persistent xyz_prev 
-% 
-% if idx ==1
-%     xyz = MPS
-%     % Initialize previous position if it's the first iteration
-%     xyz_prev = xyz;  % Store current position for next iteration
-% else
-%     xyz = alpha_now * MPS + alpha_prev * xyz_prev;  % Update current position estimate
-%     xyz_prev = xyz;  % Store current position for next iteration
-% end;
 xyz = MPS
 
+prev_xyz2 = prev_xyz % used for calculating the velocity
 
-if
 
-% 假设 xyz = [x y z]
+
+xyz = alpha_now * MPS + alpha_prev * prev_xyz;  % Update current position estimate
+prev_xyz = xyz;
+
+
+
 xyz(1) = max(1, min(512, xyz(1)));   % 限制 x 在 [1,512]
 xyz(2) = max(1, min(512, xyz(2)));   % 限制 y 在 [1,512]
 xyz(3) = max(0, xyz(3));             % 限制 z >= 0
+
+
+% done with the xyz calculating
+
+
+%%% doing the calculation on the direction
+
+
+% % % doing calculations on the velocity
+
+alpha_vel = 0.8
+alpha_vel_prev = 1-alpha_vel
+
+if idx ==1
+    vel = norm(xyz(1:2) - prev_xyz2(1:2))
+else
+    vel = alpha_vel * vel + alpha_vel_prev * norm(xyz(1:2) - prev_xyz2(1:2));  % Update velocity estimate
+end
+vel = vel *3.6
+vel_prev = vel
+
+
+%%% end of calculating velocity
+
+%%% CALCULATION FOR the angle
+
+alpha_rg = 0.2;
+al
+
+if idx ==1
+
+
+
 
 
 
