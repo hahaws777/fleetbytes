@@ -1,0 +1,1559 @@
+[xyzRMS,velRMS,angRMS,hrRMS]=FleetByte(100, 1, 0)
+
+fs =
+
+   120
+
+    0.8500
+    0.8333
+    0.8250
+    0.8500
+    0.8083
+    0.8500
+    0.8333
+    0.8750
+    0.7500
+    0.8667
+    0.8333
+    0.7917
+
+     1
+
+_______________________________________________________
+Frame: 1 statistics
+Velocity estimates:
+  Max error:  Km/h
+  RMS: NaN
+Heart Rate estimates:
+  Max error:  bpm
+  RMS: NaN
+Running direction estimates:
+  Max error:  radians
+  RMS: NaN
+Position estimates:
+  Max error:  meters
+  RMS: NaN
+
+fs =
+
+   120
+
+    0.8250
+    0.8500
+    0.8083
+    0.8500
+    0.8333
+    0.8750
+    0.7500
+    0.8667
+    0.8333
+    0.8500
+    0.8500
+
+     2
+
+_______________________________________________________
+Frame: 2 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 5.000000
+Heart Rate estimates:
+  Max error: 0.002449 bpm
+  RMS: 0.002449
+Running direction estimates:
+  Max error: 1.772238 radians
+  RMS: 1.772238
+Position estimates:
+  Max error: 182.994122 meters
+  RMS: 182.994122
+
+fs =
+
+   120
+
+    0.8500
+    0.8083
+    0.8500
+    0.8333
+    0.8750
+    0.7500
+    0.8667
+    0.8333
+    0.8500
+    0.8500
+    0.8500
+
+     3
+
+_______________________________________________________
+Frame: 3 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 5.000000
+Heart Rate estimates:
+  Max error: 0.767816 bpm
+  RMS: 0.542930
+Running direction estimates:
+  Max error: 2.196880 radians
+  RMS: 1.995884
+Position estimates:
+  Max error: 184.564802 meters
+  RMS: 183.781140
+
+fs =
+
+   120
+
+    0.8083
+    0.8500
+    0.8333
+    0.8750
+    0.7500
+    0.8667
+    0.8333
+    0.8500
+    0.8500
+    0.8500
+
+     4
+
+_______________________________________________________
+Frame: 4 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 5.000000
+Heart Rate estimates:
+  Max error: 0.767816 bpm
+  RMS: 0.485769
+Running direction estimates:
+  Max error: 2.257071 radians
+  RMS: 2.086583
+Position estimates:
+  Max error: 185.089257 meters
+  RMS: 184.218211
+
+fs =
+
+   120
+
+    0.8500
+    0.8333
+    0.8750
+    0.7500
+    0.8667
+    0.8333
+    0.8500
+    0.8500
+    0.8500
+    1.7000
+
+     5
+
+_______________________________________________________
+Frame: 5 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 5.000000
+Heart Rate estimates:
+  Max error: 0.838201 bpm
+  RMS: 0.593822
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.261245
+Position estimates:
+  Max error: 185.489382 meters
+  RMS: 184.536825
+
+fs =
+
+   120
+
+    0.8333
+    0.8750
+    0.7500
+    0.8667
+    0.8333
+    0.8500
+    0.8500
+    0.8500
+    1.7000
+    0.8667
+
+     6
+
+_______________________________________________________
+Frame: 6 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 5.000000
+Heart Rate estimates:
+  Max error: 0.838201 bpm
+  RMS: 0.552250
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.311505
+Position estimates:
+  Max error: 185.489382 meters
+  RMS: 184.561792
+
+fs =
+
+   120
+
+    0.7333
+    0.7500
+    0.8667
+    0.8333
+    0.8500
+    0.8500
+    0.8500
+    1.7000
+    0.8667
+    0.8667
+
+     7
+
+_______________________________________________________
+Frame: 7 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 5.000000
+Heart Rate estimates:
+  Max error: 0.838235 bpm
+  RMS: 0.609308
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.304773
+Position estimates:
+  Max error: 185.489382 meters
+  RMS: 184.545291
+
+fs =
+
+   120
+
+    0.8667
+    0.8333
+    0.8500
+    0.8500
+    0.8500
+    1.7000
+    0.8667
+    0.8667
+    0.8250
+    0.7917
+
+     8
+
+_______________________________________________________
+Frame: 8 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 4.961831
+Heart Rate estimates:
+  Max error: 0.838235 bpm
+  RMS: 0.578414
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.324461
+Position estimates:
+  Max error: 185.489382 meters
+  RMS: 184.602592
+
+fs =
+
+   120
+
+    0.8333
+    0.8500
+    0.8500
+    0.8500
+    1.7000
+    0.8667
+    0.8667
+    0.8250
+    0.7917
+    0.7750
+
+     9
+
+_______________________________________________________
+Frame: 9 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 4.669396
+Heart Rate estimates:
+  Max error: 4.661765 bpm
+  RMS: 1.734719
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.319600
+Position estimates:
+  Max error: 185.489382 meters
+  RMS: 184.652722
+
+fs =
+
+   120
+
+    0.8500
+    0.8500
+    0.8500
+    1.7000
+    0.8667
+    0.8667
+    0.8250
+    0.7917
+    0.7750
+    0.7000
+    0.7000
+
+    10
+
+_______________________________________________________
+Frame: 10 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 4.402349
+Heart Rate estimates:
+  Max error: 9.661765 bpm
+  RMS: 3.612074
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.351413
+Position estimates:
+  Max error: 185.489382 meters
+  RMS: 184.728848
+
+fs =
+
+   120
+
+    0.8500
+    0.8500
+    1.7000
+    0.8667
+    0.8667
+    0.8250
+    0.7917
+    0.7750
+    0.7000
+    0.7167
+    0.6583
+
+    11
+
+_______________________________________________________
+Frame: 11 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 4.176435
+Heart Rate estimates:
+  Max error: 12.522727 bpm
+  RMS: 5.236816
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.380525
+Position estimates:
+  Max error: 185.489382 meters
+  RMS: 184.774317
+
+fs =
+
+   120
+
+    1.7000
+    0.8667
+    0.8667
+    0.8250
+    0.7917
+    0.7750
+    0.7000
+    0.7167
+    0.6583
+    0.6250
+    0.6250
+
+    12
+
+_______________________________________________________
+Frame: 12 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.982074
+Heart Rate estimates:
+  Max error: 12.830645 bpm
+  RMS: 6.316413
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.410279
+Position estimates:
+  Max error: 185.489382 meters
+  RMS: 184.793900
+
+fs =
+
+   120
+
+    0.8667
+    0.8667
+    0.8250
+    0.7917
+    0.7750
+    0.7000
+    0.7167
+    0.6583
+    0.6250
+    0.6250
+    0.6333
+
+    13
+
+_______________________________________________________
+Frame: 13 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.812546
+Heart Rate estimates:
+  Max error: 12.830645 bpm
+  RMS: 6.902821
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.397508
+Position estimates:
+  Max error: 185.489382 meters
+  RMS: 184.787886
+
+fs =
+
+   120
+
+    0.8667
+    0.8667
+    0.8250
+    0.7917
+    0.7750
+    0.7000
+    0.7167
+    0.6583
+    0.6250
+    0.6250
+    0.6333
+    0.5750
+    0.6417
+
+    14
+
+_______________________________________________________
+Frame: 14 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.664574
+Heart Rate estimates:
+  Max error: 12.830645 bpm
+  RMS: 7.509679
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.362476
+Position estimates:
+  Max error: 185.489382 meters
+  RMS: 184.809318
+
+fs =
+
+   120
+
+    0.8667
+    0.8250
+    0.7917
+    0.7750
+    0.7000
+    0.7167
+    0.6583
+    0.6250
+    0.6250
+    0.6333
+    0.5750
+    0.6417
+    0.6417
+
+    15
+
+_______________________________________________________
+Frame: 15 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.544017
+Heart Rate estimates:
+  Max error: 12.830645 bpm
+  RMS: 7.325016
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.343183
+Position estimates:
+  Max error: 185.933713 meters
+  RMS: 184.889858
+
+fs =
+
+   120
+
+    0.8250
+    0.7917
+    0.7750
+    0.7000
+    0.7167
+    0.6583
+    0.6250
+    0.6250
+    0.6333
+    0.5750
+    0.6417
+    0.6417
+    0.6083
+    0.6417
+
+    16
+
+_______________________________________________________
+Frame: 16 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.467472
+Heart Rate estimates:
+  Max error: 12.830645 bpm
+  RMS: 7.080735
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.346247
+Position estimates:
+  Max error: 186.660367 meters
+  RMS: 185.008419
+
+fs =
+
+   120
+
+    0.7583
+    0.7750
+    0.7000
+    0.7167
+    0.6583
+    0.6250
+    0.6250
+    0.6333
+    0.5750
+    0.6417
+    0.6417
+    0.6083
+    0.6417
+
+    17
+
+_______________________________________________________
+Frame: 17 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.434462
+Heart Rate estimates:
+  Max error: 12.830645 bpm
+  RMS: 6.862354
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.310844
+Position estimates:
+  Max error: 186.932907 meters
+  RMS: 185.129286
+
+fs =
+
+   120
+
+    0.7000
+    0.7167
+    0.6583
+    0.6250
+    0.6250
+    0.6333
+    0.5750
+    0.6417
+    0.6417
+    0.6083
+    0.6417
+    1.3750
+    0.4333
+    0.5417
+
+    18
+
+_______________________________________________________
+Frame: 18 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.432727
+Heart Rate estimates:
+  Max error: 12.830645 bpm
+  RMS: 6.727259
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.280518
+Position estimates:
+  Max error: 188.569829 meters
+  RMS: 185.333439
+
+fs =
+
+   120
+
+    0.7167
+    0.6583
+    0.6250
+    0.6250
+    0.6333
+    0.5750
+    0.6417
+    0.6417
+    0.6083
+    0.6417
+    1.3750
+    0.4333
+    0.5250
+    0.6583
+
+    19
+
+_______________________________________________________
+Frame: 19 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.448626
+Heart Rate estimates:
+  Max error: 12.830645 bpm
+  RMS: 6.808616
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.239060
+Position estimates:
+  Max error: 190.276637 meters
+  RMS: 185.611515
+
+fs =
+
+   120
+
+    0.6333
+    0.6250
+    0.6250
+    0.6333
+    0.5750
+    0.6417
+    0.6417
+    0.6083
+    0.6417
+    1.3750
+    0.4333
+    0.5250
+    1.1750
+    0.5500
+
+    20
+
+_______________________________________________________
+Frame: 20 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.481559
+Heart Rate estimates:
+  Max error: 12.830645 bpm
+  RMS: 7.117961
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.194687
+Position estimates:
+  Max error: 192.529972 meters
+  RMS: 185.982060
+
+fs =
+
+   120
+
+    0.6250
+    0.6333
+    0.5750
+    0.6417
+    0.6417
+    0.6083
+    0.6417
+    1.8083
+    0.5250
+    1.1750
+    0.5500
+    0.4917
+    0.5083
+
+    21
+
+_______________________________________________________
+Frame: 21 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.536200
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 7.746817
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.147249
+Position estimates:
+  Max error: 195.011151 meters
+  RMS: 186.443900
+
+fs =
+
+   120
+
+    0.5167
+    0.5750
+    0.6417
+    0.6417
+    0.6083
+    0.6417
+    1.8083
+    0.5250
+    1.1750
+    0.5500
+    0.4917
+    0.5083
+    0.5083
+    0.5000
+
+    22
+
+_______________________________________________________
+Frame: 22 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.601425
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 7.842069
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.104921
+Position estimates:
+  Max error: 197.607137 meters
+  RMS: 186.990595
+
+fs =
+
+   120
+
+    0.6417
+    0.6417
+    0.6083
+    0.6417
+    1.8083
+    0.5250
+    1.1750
+    0.5500
+    0.4917
+    0.5083
+    0.5083
+    0.5000
+    0.5000
+    0.4750
+
+    23
+
+_______________________________________________________
+Frame: 23 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.675421
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 7.914128
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.060987
+Position estimates:
+  Max error: 200.300614 meters
+  RMS: 187.616082
+
+fs =
+
+   120
+
+    0.6083
+    0.6417
+    1.3750
+    0.4333
+    0.5250
+    1.1750
+    0.5500
+    0.4917
+    0.5083
+    0.5083
+    0.5000
+    0.5000
+    0.4750
+    0.4583
+    0.4583
+
+    24
+
+_______________________________________________________
+Frame: 24 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.738203
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 7.893334
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 2.015749
+Position estimates:
+  Max error: 202.911894 meters
+  RMS: 188.306955
+
+fs =
+
+   120
+
+    1.3750
+    0.4333
+    0.5250
+    1.1750
+    0.5500
+    0.4917
+    0.5083
+    0.5083
+    0.5000
+    0.5000
+    0.4750
+    0.4583
+    0.4583
+    0.4667
+    0.4417
+    0.4333
+
+    25
+
+_______________________________________________________
+Frame: 25 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.784529
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 7.928442
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.974466
+Position estimates:
+  Max error: 204.288330 meters
+  RMS: 188.999827
+
+fs =
+
+   120
+
+    0.7583
+    0.4333
+    0.5250
+    1.1750
+    0.5500
+    0.4917
+    0.5083
+    0.5083
+    0.5000
+    0.5000
+    0.4750
+    0.4583
+    0.4583
+    0.4667
+    0.4417
+    0.4333
+    0.4417
+    0.4250
+
+    26
+
+_______________________________________________________
+Frame: 26 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.803694
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 7.995660
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.938624
+Position estimates:
+  Max error: 206.472219 meters
+  RMS: 189.729619
+
+fs =
+
+   120
+
+    0.4250
+    0.5250
+    1.1750
+    0.5500
+    0.4917
+    0.5083
+    0.5083
+    0.5000
+    0.5000
+    0.4750
+    0.4583
+    0.4583
+    0.4667
+    0.4417
+    0.4333
+    0.4417
+    0.4250
+    0.4333
+    0.4417
+
+    27
+
+_______________________________________________________
+Frame: 27 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.804596
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 8.013094
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.908054
+Position estimates:
+  Max error: 208.901225 meters
+  RMS: 190.502668
+
+fs =
+
+   120
+
+    0.5500
+    0.4917
+    0.5083
+    0.5083
+    0.5000
+    0.5000
+    0.4750
+    0.4583
+    0.4583
+    0.4667
+    0.4417
+    0.4333
+    0.4417
+    0.4250
+    0.4333
+    0.4417
+    0.4250
+    0.4000
+    0.4500
+
+    28
+
+_______________________________________________________
+Frame: 28 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.780450
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 8.044006
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.887340
+Position estimates:
+  Max error: 211.336653 meters
+  RMS: 191.314760
+
+fs =
+
+   120
+
+    0.5500
+    0.4917
+    0.5083
+    0.5083
+    0.5000
+    0.5000
+    0.4750
+    0.4583
+    0.4583
+    0.4667
+    0.4417
+    0.4333
+    0.4417
+    0.4250
+    0.4333
+    0.4417
+    0.4250
+    0.4000
+    0.4500
+    0.4167
+    0.4167
+
+    29
+
+_______________________________________________________
+Frame: 29 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.734596
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 8.039965
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.882835
+Position estimates:
+  Max error: 213.496204 meters
+  RMS: 192.151051
+
+fs =
+
+   120
+
+    0.5083
+    0.5083
+    0.5000
+    0.5000
+    0.4750
+    0.4583
+    0.4583
+    0.4667
+    0.4417
+    0.4333
+    0.4417
+    0.4250
+    0.4333
+    0.4417
+    0.4250
+    0.4000
+    0.4500
+    0.4167
+    0.4167
+    0.4333
+    0.4417
+
+    30
+
+_______________________________________________________
+Frame: 30 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.673049
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 7.928647
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.879202
+Position estimates:
+  Max error: 214.882410 meters
+  RMS: 192.979469
+
+fs =
+
+   120
+
+    0.5000
+    0.5000
+    0.4750
+    0.4583
+    0.4583
+    0.4667
+    0.4417
+    0.4333
+    0.4417
+    0.4250
+    0.4333
+    0.4417
+    0.4250
+    0.4000
+    0.4500
+    0.4167
+    0.4167
+    0.4333
+    0.4417
+
+    31
+
+_______________________________________________________
+Frame: 31 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.611313
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 7.796867
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.878470
+Position estimates:
+  Max error: 216.002878 meters
+  RMS: 193.790990
+
+fs =
+
+   120
+
+    0.4750
+    0.4583
+    0.4583
+    0.4667
+    0.4417
+    0.4333
+    0.4417
+    0.4250
+    0.4333
+    0.4417
+    0.4250
+    0.4000
+    0.4500
+    0.4167
+    0.4167
+    0.4333
+    0.4417
+    1.3417
+    0.4500
+    0.4500
+
+    32
+
+_______________________________________________________
+Frame: 32 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.552588
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 7.686624
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.887502
+Position estimates:
+  Max error: 216.879258 meters
+  RMS: 194.578539
+
+fs =
+
+   120
+
+    0.4583
+    0.4667
+    0.4417
+    0.4333
+    0.4417
+    0.4250
+    0.4333
+    0.4417
+    0.4250
+    0.4000
+    0.4500
+    0.4167
+    0.4167
+    0.4333
+    0.4417
+    1.3417
+    0.4500
+    0.4500
+    0.4667
+    0.4917
+
+    33
+
+_______________________________________________________
+Frame: 33 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.496638
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 7.668560
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.883534
+Position estimates:
+  Max error: 217.425954 meters
+  RMS: 195.332976
+
+fs =
+
+   120
+
+    0.4417
+    0.4333
+    0.4417
+    0.4250
+    0.4333
+    0.4417
+    0.4250
+    0.4000
+    0.4500
+    0.4167
+    0.4167
+    0.4333
+    0.4417
+    1.3417
+    0.4500
+    0.4500
+    0.4667
+    0.4917
+    0.5000
+    0.5167
+
+    34
+
+_______________________________________________________
+Frame: 34 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.443251
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 7.832983
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.882028
+Position estimates:
+  Max error: 218.416908 meters
+  RMS: 196.072423
+
+fs =
+
+   120
+
+    0.4250
+    0.4333
+    0.4417
+    0.4250
+    0.4000
+    0.4500
+    0.4167
+    0.4167
+    0.4333
+    0.4417
+    1.3417
+    0.4500
+    0.4500
+    0.4667
+    0.4917
+    0.5000
+    0.5167
+    0.4917
+    0.5167
+
+    35
+
+_______________________________________________________
+Frame: 35 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.392374
+Heart Rate estimates:
+  Max error: 15.414975 bpm
+  RMS: 8.104508
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.891082
+Position estimates:
+  Max error: 219.334762 meters
+  RMS: 196.795861
+
+fs =
+
+   120
+
+    0.4417
+    0.4250
+    0.4000
+    0.4500
+    0.4167
+    0.4167
+    0.4333
+    0.4417
+    1.3417
+    0.4500
+    0.4500
+    0.4667
+    0.4917
+    0.5000
+    0.5167
+    0.4917
+    0.5167
+    0.5500
+
+    36
+
+_______________________________________________________
+Frame: 36 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.345537
+Heart Rate estimates:
+  Max error: 19.439106 bpm
+  RMS: 8.637298
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.897991
+Position estimates:
+  Max error: 219.883915 meters
+  RMS: 197.492981
+
+fs =
+
+   120
+
+    0.4000
+    0.4500
+    0.4167
+    0.4167
+    0.4333
+    0.4417
+    1.3417
+    0.4500
+    0.4500
+    0.4667
+    0.4917
+    0.5000
+    0.5167
+    0.4917
+    0.5167
+    0.5500
+    0.5500
+    0.5667
+
+    37
+
+_______________________________________________________
+Frame: 37 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.304347
+Heart Rate estimates:
+  Max error: 19.439106 bpm
+  RMS: 8.940464
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.887957
+Position estimates:
+  Max error: 220.566292 meters
+  RMS: 198.170185
+
+fs =
+
+   120
+
+    0.4167
+    0.4333
+    0.4417
+    1.3417
+    0.4500
+    0.4500
+    0.4667
+    0.4917
+    0.5000
+    0.5167
+    0.4917
+    0.5167
+    0.5500
+    0.5500
+    0.5667
+    0.5917
+    0.5833
+
+    38
+
+_______________________________________________________
+Frame: 38 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.276576
+Heart Rate estimates:
+  Max error: 19.439106 bpm
+  RMS: 9.176679
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.868858
+Position estimates:
+  Max error: 222.071548 meters
+  RMS: 198.853944
+
+fs =
+
+   120
+
+    0.4417
+    1.3417
+    0.4500
+    0.4500
+    0.4667
+    0.4917
+    0.5000
+    0.5167
+    0.4917
+    0.5167
+    0.5500
+    0.5500
+    0.5667
+    0.5917
+    0.5833
+
+    39
+
+    39
+
+_______________________________________________________
+Frame: 39 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.270540
+Heart Rate estimates:
+  Max error: 19.439106 bpm
+  RMS: 9.336032
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.857271
+Position estimates:
+  Max error: 224.024438 meters
+  RMS: 199.557004
+
+fs =
+
+   120
+
+    0.4500
+    0.4500
+    0.4667
+    0.4917
+    0.5000
+    0.5167
+    0.4917
+    0.5167
+    0.5500
+    0.5500
+    0.5667
+    0.5917
+    0.5833
+    1.6917
+    0.5667
+
+    40
+
+    40
+
+_______________________________________________________
+Frame: 40 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.285958
+Heart Rate estimates:
+  Max error: 19.439106 bpm
+  RMS: 9.401692
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.834829
+Position estimates:
+  Max error: 226.116937 meters
+  RMS: 200.282031
+
+fs =
+
+   120
+
+    0.4500
+    0.4667
+    0.4917
+    0.5000
+    0.5167
+    0.4917
+    0.5167
+    0.5500
+    0.5500
+    0.5667
+    0.5917
+    0.5833
+    1.6917
+    0.5500
+    0.5417
+
+    41
+
+    41
+
+_______________________________________________________
+Frame: 41 statistics
+Velocity estimates:
+  Max error: 5.000000 Km/h
+  RMS: 3.314078
+Heart Rate estimates:
+  Max error: 19.439106 bpm
+  RMS: 9.293545
+Running direction estimates:
+  Max error: 2.718721 radians
+  RMS: 1.814172
+Position estimates:
+  Max error: 228.224457 meters
+  RMS: 201.027933
+
+fs =
+
+   120
+
+    0.4917
+    0.5000
+    0.5167
+    0.4917
+    0.5167
+    0.5500
+    0.5500
+    0.5667
+    0.5917
+    0.5833
+    1.6917
+    0.5500
+    0.5417
+    0.5167
+    0.5083
+
+    42
+
+    42
+
+{操作在以下过程中被用户终止 <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('Sim1', 'C:\Users\PC\Desktop\cscc85\Sim1.m', 144)" style="font-weight:bold">Sim1</a> (<a href="matlab: opentoline('C:\Users\PC\Desktop\cscc85\Sim1.m',144,0)">第 144 行</a>)
+
+
+位置 <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('FleetByte', 'C:\Users\PC\Desktop\cscc85\FleetByte.m', 259)" style="font-weight:bold">FleetByte</a> (<a href="matlab: opentoline('C:\Users\PC\Desktop\cscc85\FleetByte.m',259,0)">第 259 行</a>)
+ [t1,t2,t3,xyzRMS,velRMS,angRMS,hrRMS]=Sim1(map, xyz,hr,di,vel);
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+claer
+{函数或变量 'claer' 无法识别。
+} 
+clear
+clc
+closs all;
+{函数或变量 'closs' 无法识别。
+} 
+close all;
+close sim1.h
+{错误使用 close
+指定的窗口不存在。
+} 
+clear Sim1 FleetByte
+clc
+dairy outlog.txt
+{函数或变量 'dairy' 无法识别。
+} 
+diary outlog.txt
