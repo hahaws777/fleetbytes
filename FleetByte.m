@@ -133,14 +133,42 @@ close all;
 
 prev_xyz = [256 256 .5]
 
-vel_prev = 0
+vel_prev = 10
 
 Rg_lp =0
 
 theta_prev = 0
 pos_for_dir =[0,0,0]
 
+%% VEL
+dt = 1;
 
+F = [1 0 0 dt 0  0;
+     0 1 0 0  dt 0;
+     0 0 1 0  0  dt;
+     0 0 0 1  0  0;
+     0 0 0 0  1  0;
+     0 0 0 0  0  1];
+
+H = [1 0 0 0 0 0;
+     0 1 0 0 0 0;
+     0 0 1 0 0 0];
+
+sigma_meas = 5;
+sigma_acc  = 0.25;
+Q = sigma_acc^2 * [ (dt^4)/4 0         0         (dt^3)/2 0        0;
+                    0        (dt^4)/4  0         0        (dt^3)/2 0;
+                    0        0        (dt^4)/4  0        0        (dt^3)/2;
+                    (dt^3)/2 0        0         dt^2     0        0;
+                    0        (dt^3)/2 0         0        dt^2     0;
+                    0        0        (dt^3)/2  0        0        dt^2];
+R = (sigma_meas^2) * eye(3);
+I6 = eye(6);
+
+xKF = [];   % 状态向量（跨循环记忆）
+PKF = [];   % 协方差矩阵
+
+%% END VEL
 
 %%%%%%%%%% ... AND THIS LINE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -295,7 +323,7 @@ end
 
 
 
-%%% starting with the xyz calculation
+%% starting with the xyz calculation
 
 alpha_now = 0.8;        % 当前测量的权重（你要的 0.7）
 alpha_prev = 1 - alpha_now;   % 上一帧估计的权重（=0.3）
@@ -322,21 +350,7 @@ xyz(3) = max(0, xyz(3));             % 限制 z >= 0
 %%% doing the calculation on the direction
 
 
-% % % doing calculations on the velocity
 
-alpha_vel = 0.8
-alpha_vel_prev = 1-alpha_vel
-
-if idx ==1
-    vel = norm(xyz(1:2) - prev_xyz2(1:2))
-else
-    vel = alpha_vel * vel + alpha_vel_prev * norm(xyz(1:2) - prev_xyz2(1:2));  % Update velocity estimate
-end
-vel = vel *3.6
-vel_prev = vel
-
-
-%%% end of calculating velocity
 
 %%% CALCULATION FOR the angle
 
@@ -347,7 +361,7 @@ if isempty(Rg_lp), Rg_lp = Rg; end
 Rg_lp = alpha_rg*Rg + (1-alpha_rg)*Rg_lp;
 
 
-% ===== Direction estimation (complementary fusion) =====
+%% ===== Direction estimation (complementary fusion) =====
 gamma_yaw = 0.35;    % 越大越信位移方向（0.2~0.5）
 min_step  = 0.25;    % 只有位移>0.25m才纠偏，防抖动误导
 
@@ -380,11 +394,49 @@ di = [cos(theta)  sin(theta)];
 theta_prev = theta;
 
 
+%% ===== 3D Kalman Filter for position & velocity =====
+
+%ds = hypot(xyz(1)-prev_xyz2(1), xyz(2)-prev_xyz2(2));   % m
+%vel_meas = (ds/dt) * 3.6;                                % km/h
+%if ds > 4, R = 9*eye(3); else, R = (sigma_meas^2)*eye(3); end
+
+% 初始化
+if isempty(xKF)
+    xKF = [MPS(1); MPS(2); MPS(3); 0; 0; 0];                     % 初始位置=第一帧 MPS, 速度=0
+    PKF = diag([sigma_meas^2 sigma_meas^2 sigma_meas^2  25 25 25]); % 初始速度不确定性大
+else
+    % ==== 预测 ====
+    x_pred = F * xKF;
+    P_pred = F * PKF * F' + Q;
+
+    % ==== 更新 ====
+    z = MPS(:);                % 观测向量 (3x1)
+    y = z - H * x_pred;        % 创新
+    S = H * P_pred * H' + R;
+    K = P_pred * H' / S;       % 卡尔曼增益
+    xKF = x_pred + K*y;
+    PKF = (I6 - K*H)*P_pred;
+end
 
 
+% 输出估计位置与速度
+xyz = xKF(1:3)';                           % [x y z]
+vel_ms = norm(xKF(4:6));                   % 速度模长 (m/s)
+%if vel_meas < 4.5, vel_meas = 5; end
+vel    = vel_ms * 3.6;                     % 转 km/h
+%vel = min(15, max(5, vel));
+
+xyz = xyz(:)';                     % 行向量
+if ~all(isfinite(xyz)), xyz = MPS; end
+xyz(1) = min(max(xyz(1), 1), 512);
+xyz(2) = min(max(xyz(2), 1), 512);
+xyz(3) = max(0, xyz(3)); 
 
 
- 
+%% TODO: Hardcode base on rover physical specs
+
+%% END VEL
+disp({xyz,hr,di,vel})
 
     disp(idx)
 
@@ -399,6 +451,7 @@ theta_prev = theta;
  
  idx=idx+1; 
 end;
+beep;
 
 %%%%% Interesting links you may want to browse - I used these while designing this exercise.
 % https://www.rohm.com/electronics-basics/sensor/pulse-sensor
