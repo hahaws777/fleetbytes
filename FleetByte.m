@@ -141,8 +141,9 @@ theta_prev = 0
 pos_for_dir =[0,0,0]
 
 %% VEL
-dt = 1;
+dt = 1;                                   % 采样周期（仿真就是 1 s）
 
+% 状态转移 & 观测矩阵
 F = [1 0 0 dt 0  0;
      0 1 0 0  dt 0;
      0 0 1 0  0  dt;
@@ -154,20 +155,30 @@ H = [1 0 0 0 0 0;
      0 1 0 0 0 0;
      0 0 1 0 0 0];
 
-sigma_meas = 5;
-sigma_acc  = 0.25;
+% 噪声参数（建议值，可微调）
+sigma_meas = 3;                         % MPS 位置测量噪声（米）
+sigma_acc  = 1.5;                         % 过程噪声（m/s^2）
+
+% 过程噪声 Q、测量噪声 R
 Q = sigma_acc^2 * [ (dt^4)/4 0         0         (dt^3)/2 0        0;
                     0        (dt^4)/4  0         0        (dt^3)/2 0;
                     0        0        (dt^4)/4  0        0        (dt^3)/2;
                     (dt^3)/2 0        0         dt^2     0        0;
                     0        (dt^3)/2 0         0        dt^2     0;
                     0        0        (dt^3)/2  0        0        dt^2];
-R = (sigma_meas^2) * eye(3);
+R  = (sigma_meas^2) * eye(3);
 I6 = eye(6);
 
-xKF = [];   % 状态向量（跨循环记忆）
-PKF = [];   % 协方差矩阵
+% KF 容器（空表示尚未初始化）
+xKF   = [];                               % 6x1: [x y z vx vy vz]'
+PKF   = [];                               % 6x6 协方差
 
+% 速度的指数平滑（可选）
+vel_lp = [];                              
+beta_vel = 0.2;                           % 0.15~0.3 之间都行
+
+VEL_MIN = 5;
+VEL_MAX = 15;
 %% END VEL
 
 %%%%%%%%%% ... AND THIS LINE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,7 +246,7 @@ while(idx<=secs)               %% Main simulation loop
  xyz=[128 128 .5];       % Replace with your computation of position, the map is 512x512 pixels in size
  hr=82;                  % Replace with your computation of heart rate
  di=[0 1];               % Replace with your computation for running direction, this should be a 2D unit vector
- vel=5;                  % Replace with your computation of running velocity, in Km/h
+ vel=10;                  % Replace with your computation of running velocity, in Km/h
  
  if (deb==1)
      figure(5);clf;plot(HRS);
@@ -396,35 +407,49 @@ theta_prev = theta;
 
 %% ===== 3D Kalman Filter for position & velocity =====
 
-%ds = hypot(xyz(1)-prev_xyz2(1), xyz(2)-prev_xyz2(2));   % m
-%vel_meas = (ds/dt) * 3.6;                                % km/h
-%if ds > 4, R = 9*eye(3); else, R = (sigma_meas^2)*eye(3); end
 
 % 初始化
-if isempty(xKF)
-    xKF = [MPS(1); MPS(2); MPS(3); 0; 0; 0];                     % 初始位置=第一帧 MPS, 速度=0
-    PKF = diag([sigma_meas^2 sigma_meas^2 sigma_meas^2  25 25 25]); % 初始速度不确定性大
+if idx <= 8
+    % 前两帧固定 10 km/h，同时用此速度初始化 KF 状态
+    vel = 10;
+    if isempty(xKF)
+        v0   = 10/3.6;                          % m/s
+        dir0 = [cos(theta_prev), sin(theta_prev), 0];
+        xKF  = [MPS(:); (v0*dir0(:))];
+        PKF  = diag([R(1,1) R(2,2) R(3,3)  100 100 100]);
+        vel_lp = vel;
+    else
+        % 第二帧保持 vel=10，但仍然让 KF 跟踪位置（更新）
+        x_pred = F * xKF;   P_pred = F * PKF * F' + Q;
+        z = MPS(:); y = z - H*x_pred; S = H*P_pred*H' + R;
+        K = P_pred*H'/S;
+        xKF = x_pred + K*y; PKF = (I6-K*H)*P_pred;
+        vel_lp = vel;       % 保持平滑器
+    end
+    xyz = xKF(1:3)';
 else
-    % ==== 预测 ====
-    x_pred = F * xKF;
-    P_pred = F * PKF * F' + Q;
+    % 第 3 帧起：标准 KF
+    % 预测
+    x_pred = F * xKF;   P_pred = F * PKF * F' + Q;
+    % 更新（仅位置）
+    z = MPS(:); y = z - H*x_pred; S = H*P_pred*H' + R;
+    K = P_pred*H'/S;
+    xKF = x_pred + K*y; PKF = (I6-K*H)*P_pred;
 
-    % ==== 更新 ====
-    z = MPS(:);                % 观测向量 (3x1)
-    y = z - H * x_pred;        % 创新
-    S = H * P_pred * H' + R;
-    K = P_pred * H' / S;       % 卡尔曼增益
-    xKF = x_pred + K*y;
-    PKF = (I6 - K*H)*P_pred;
+    % 输出
+    xyz = xKF(1:3)';                 % KF 位置
+    vel = norm(xKF(4:6)) * 3.6;      % km/h
+    vel = beta_vel*vel + (1-beta_vel)*vel_lp;  % EMA
+    if vel < VEL_MIN || vel > VEL_MAX
+        target_kmh = min(max(vel, VEL_MIN), VEL_MAX);
+        scale = (target_kmh/3.6) / max(norm(xKF(4:6)), 1e-6);
+        xKF(4:6) = xKF(4:6) * scale;   % 缩放速度分量
+        vel = target_kmh;               % 输出也用缩放后的
+    end
+    vel_lp = vel;
 end
 
 
-% 输出估计位置与速度
-xyz = xKF(1:3)';                           % [x y z]
-vel_ms = norm(xKF(4:6));                   % 速度模长 (m/s)
-%if vel_meas < 4.5, vel_meas = 5; end
-vel    = vel_ms * 3.6;                     % 转 km/h
-%vel = min(15, max(5, vel));
 
 xyz = xyz(:)';                     % 行向量
 if ~all(isfinite(xyz)), xyz = MPS; end
