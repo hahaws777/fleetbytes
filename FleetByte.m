@@ -3,7 +3,7 @@ ttt%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % UTSC - Fall 2021
 %
 % Starter code (c) F. Estrada, August 2021
-% 
+%
 % Sensors and Signal Processing
 %
 %  You may have heard there are all kinds of plans to
@@ -44,7 +44,7 @@ ttt%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   secs - number of (virtual) seconds to run the simulation for.
 %          Each call to Sim1() returns sensor readings for 1 sec,
 %          so this is in effect the numbe or rounds of simulation
-%          you want. 
+%          you want.
 %
 %   map - Select map (1 or 2), each is a crop from the global Mars
 %         elevation map from NASA - image in public domain. Note
@@ -58,7 +58,7 @@ ttt%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %          about how to get a heartrate out of it), and print out
 %          the sensor readings returned by Sim1(). You can add your
 %          own debug/testing output as well.
-%               
+%
 % - delta_t - maximum change in rover direction per unit of time, in radians
 %
 % Return values:
@@ -72,9 +72,9 @@ ttt%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  MPS - Martian Positioning System - reports 3D position anywhere on Mars
 %        to within a small displacement from actual location. Like its
-%        Earthly cousin, MPS has an expected location error. For 
+%        Earthly cousin, MPS has an expected location error. For
 %        a typical wearable device, on Earth, location error is
-%        within 5m of the actual location 
+%        within 5m of the actual location
 %        (https://www.gps.gov/systems/gps/performance/accuracy/)
 %        Our FleetByte has a similar receiver, but due to the lower
 %        density of Martian atmosphere, distortion due to armospheric
@@ -85,10 +85,10 @@ ttt%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %          are more difficult since buildings reflect GPS signals leading
 %          to increased error in position estimates.
 %
-%  Heart Rate Sensor (HRS) - This one is interesting. Modern wearable 
-%        HR monitors typically use light reflection from 
+%  Heart Rate Sensor (HRS) - This one is interesting. Modern wearable
+%        HR monitors typically use light reflection from
 %        arterial blood to determine the heart rate - the
-%        pulsing blood creates a periodic waveform in the 
+%        pulsing blood creates a periodic waveform in the
 %        reflected light. Issues with noise, low signal-to-noise
 %        ratio, and effects due to skin colour, thickness, and
 %        even ambient light combine to produce a fairly noisy
@@ -98,15 +98,15 @@ ttt%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %        If you're very curious, this manufacturer has a
 %        very thorough description of how their sensor works and
 %        the different technical issues involved in computing a
-%        heartrate from it ** YOU ARE NOT EXPECTED TO READ 
-%        THROUGH AND IMPLEMENT THIS, IT'S THERE IN CASE YOU 
+%        heartrate from it ** YOU ARE NOT EXPECTED TO READ
+%        THROUGH AND IMPLEMENT THIS, IT'S THERE IN CASE YOU
 %        WANT TO LEARN MORE **
 %        https://www.maximintegrated.com/en/products/interface/sensor-interface/MAX30102.html#product-details
 %
 %  Rate gyro (RG) - A fairly standard rate gyro, returns the measured
 %              change in angle for the direction of motion (i.e.
 %              tells you by how many radians this direction changed
-%              in between readings). 
+%              in between readings).
 %
 %              Somewhat noisy, but this assuming the user doesn't
 %              move their arms in weird directions while running
@@ -145,15 +145,15 @@ dt = 1;                                   % 采样周期（仿真就是 1 s）
 
 % 状态转移 & 观测矩阵
 F = [1 0 0 dt 0  0;
-     0 1 0 0  dt 0;
-     0 0 1 0  0  dt;
-     0 0 0 1  0  0;
-     0 0 0 0  1  0;
-     0 0 0 0  0  1];
+    0 1 0 0  dt 0;
+    0 0 1 0  0  dt;
+    0 0 0 1  0  0;
+    0 0 0 0  1  0;
+    0 0 0 0  0  1];
 
 H = [1 0 0 0 0 0;
-     0 1 0 0 0 0;
-     0 0 1 0 0 0];
+    0 1 0 0 0 0;
+    0 0 1 0 0 0];
 
 % 噪声参数（建议值，可微调）
 sigma_meas = 3;                         % Larger means less trust in MPS
@@ -161,11 +161,11 @@ sigma_acc  = 0.2;                         % Larger means more erratic motion
 
 % 过程噪声 Q、测量噪声 R
 Q = sigma_acc^2 * [ (dt^4)/4 0         0         (dt^3)/2 0        0;
-                    0        (dt^4)/4  0         0        (dt^3)/2 0;
-                    0        0        (dt^4)/4  0        0        (dt^3)/2;
-                    (dt^3)/2 0        0         dt^2     0        0;
-                    0        (dt^3)/2 0         0        dt^2     0;
-                    0        0        (dt^3)/2  0        0        dt^2];
+    0        (dt^4)/4  0         0        (dt^3)/2 0;
+    0        0        (dt^4)/4  0        0        (dt^3)/2;
+    (dt^3)/2 0        0         dt^2     0        0;
+    0        (dt^3)/2 0         0        dt^2     0;
+    0        0        (dt^3)/2  0        0        dt^2];
 R  = (sigma_meas^2) * eye(3);
 I6 = eye(6);
 
@@ -182,79 +182,79 @@ VEL_MAX = 15;
 idx=1;
 while(idx<=secs)               %% Main simulation loop
 
- [MPS,HRS,Rg]=Sim1(map);       % Simulates 1-second of running and returns the sensor readings
+    [MPS,HRS,Rg]=Sim1(map);       % Simulates 1-second of running and returns the sensor readings
 
 
 
-                         
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- % TO DO:
- %  Sim1() returns noisy readings for global position (x,y,z), a heart-rate
- %    sensor signal array for the last 10 seconds, and a value for the rate
- %    gyro (the amount of rotation in radians by which the running direction
- %    changed over the last second).
- %
- %    In the space below, write code to:
- %
- %    - Estimate as closely as possible the actual 3D position of the jogger
- %
- %    - Compute the current hear-rate (this will require some thought, make
- %      sure to look closely at the plot of HRS, and think of ways in which
- %      you can determine the heart rate from this). Remember the data 
- %      in the plot corresponds to the last 10 seconds. And, just FYI, it's
- %      based on what the actual data returned from a typical wrist-worn
- %      heart rate monitor returns. So it's fairly realistic in terms of what
- %      you'd need to process if you were actually implementing a FleetByte
- %
- %    - Estimate the running direction (huh? but the rate gyro only returns
- %      the change in angle over the last second! we don't know the initial
- %      running direction right?) - well, you don't, but you can figure it
- %      out :) - that's part of the exercise.
- %      * REFERENCE: - given a direction vector, if you want to apply a
- %         rotation by a particular angle to this vector, you simply 
- %         multiply the vector by the corresponding rotation matrix:
- %
- %            d1=R*d;
- %
- %         Where d is the input direction vector (a unit-length, column
- %         vector with 2 components). R is the rotation matrix for 
- %         the amount of rotation you want:
- %
- %           R=[cos(theta) -sin(theta)
- %              sin(theta) cos(theta)];
- %
- %         'theta' is in radians. Finally, d1 is the resulting direction vector.
- %
- %    - Estimate the running speed in Km/h - This is *not* returned by any
- %      of the sensor readings, so you have to estimate it (carefully). 
- %
- %    Goal: To get the estimates as close as possible to the real value for
- %          the relevant quantities above. The last part of the script calls
- %          the imulation code to plot the real values against your estimares
- %          so you can see how well you're doing. In particular, you want the
- %          RMS of each measurement to be as close to 0 as possible.
- %          RMS is a common measure of error, and corresponds to the square
- %          root of the average squared error between a measurement and the
- %          corresponding estimate, taken over time. 
- %    
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- xyz=[128 128 .5];       % Replace with your computation of position, the map is 512x512 pixels in size
- hr=82;                  % Replace with your computation of heart rate
- di=[0 1];               % Replace with your computation for running direction, this should be a 2D unit vector
- vel=10;                  % Replace with your computation of running velocity, in Km/h
- 
- if (deb==1)
-     figure(5);clf;plot(HRS);
-     fprintf(2,'****** For this frame: *******\n');
-     fprintf(2,'MPS=[%f %f %f]\n',MPS(1),MPS(2),MPS(3));
-     fprintf(2,'Rate gyro=%f\n',Rg);
-     fprintf(2,'---> Press [ENTER] on the Matlab/Octave terminal to continue...\n');
-     drawnow;
-     pause;
- end;
- 
- %%% SOLUTION:
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % TO DO:
+    %  Sim1() returns noisy readings for global position (x,y,z), a heart-rate
+    %    sensor signal array for the last 10 seconds, and a value for the rate
+    %    gyro (the amount of rotation in radians by which the running direction
+    %    changed over the last second).
+    %
+    %    In the space below, write code to:
+    %
+    %    - Estimate as closely as possible the actual 3D position of the jogger
+    %
+    %    - Compute the current hear-rate (this will require some thought, make
+    %      sure to look closely at the plot of HRS, and think of ways in which
+    %      you can determine the heart rate from this). Remember the data
+    %      in the plot corresponds to the last 10 seconds. And, just FYI, it's
+    %      based on what the actual data returned from a typical wrist-worn
+    %      heart rate monitor returns. So it's fairly realistic in terms of what
+    %      you'd need to process if you were actually implementing a FleetByte
+    %
+    %    - Estimate the running direction (huh? but the rate gyro only returns
+    %      the change in angle over the last second! we don't know the initial
+    %      running direction right?) - well, you don't, but you can figure it
+    %      out :) - that's part of the exercise.
+    %      * REFERENCE: - given a direction vector, if you want to apply a
+    %         rotation by a particular angle to this vector, you simply
+    %         multiply the vector by the corresponding rotation matrix:
+    %
+    %            d1=R*d;
+    %
+    %         Where d is the input direction vector (a unit-length, column
+    %         vector with 2 components). R is the rotation matrix for
+    %         the amount of rotation you want:
+    %
+    %           R=[cos(theta) -sin(theta)
+    %              sin(theta) cos(theta)];
+    %
+    %         'theta' is in radians. Finally, d1 is the resulting direction vector.
+    %
+    %    - Estimate the running speed in Km/h - This is *not* returned by any
+    %      of the sensor readings, so you have to estimate it (carefully).
+    %
+    %    Goal: To get the estimates as close as possible to the real value for
+    %          the relevant quantities above. The last part of the script calls
+    %          the imulation code to plot the real values against your estimares
+    %          so you can see how well you're doing. In particular, you want the
+    %          RMS of each measurement to be as close to 0 as possible.
+    %          RMS is a common measure of error, and corresponds to the square
+    %          root of the average squared error between a measurement and the
+    %          corresponding estimate, taken over time.
+    %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    xyz=[128 128 .5];       % Replace with your computation of position, the map is 512x512 pixels in size
+    hr=82;                  % Replace with your computation of heart rate
+    di=[0 1];               % Replace with your computation for running direction, this should be a 2D unit vector
+    vel=10;                  % Replace with your computation of running velocity, in Km/h
+
+    if (deb==1)
+        figure(5);clf;plot(HRS);
+        fprintf(2,'****** For this frame: *******\n');
+        fprintf(2,'MPS=[%f %f %f]\n',MPS(1),MPS(2),MPS(3));
+        fprintf(2,'Rate gyro=%f\n',Rg);
+        fprintf(2,'---> Press [ENTER] on the Matlab/Octave terminal to continue...\n');
+        drawnow;
+        pause;
+    end;
+
+    %%% SOLUTION:
 
 
 
@@ -275,9 +275,9 @@ th = median(ecg) + 0.5*std(ecg);
 % setting the distance between two peaks
 minDist = round(0.25 * fs);
 
-pks = [];
-locs = [];
-N = length(ecg)
+    pks = [];
+    locs = [];
+    N = length(ecg)
 
 
 % % applying the find peaks > minDist
@@ -288,11 +288,11 @@ N = length(ecg)
 
 
 
-% 输入：x, h, d
-% 输出：pks, locs
+    % 输入：x, h, d
+    % 输出：pks, locs
 
 
-% implemtnt the find peaks through the hand roke 
+    % implemtnt the find peaks through the hand roke
 
 x2 = ecg(:); 
 h = th
@@ -368,18 +368,18 @@ end
     % for rr, we will fix it by adding another place of bump if the
     % distance of two rr is too big
 
-    medRR = median(RR);
-    fixedRR = [];
-    for i = 1:numel(RR)
-        if RR(i) > 1.5*medRR & RR(i) <2.5*medRR
-            fixedRR = [fixedRR, RR(i)/2, RR(i)/2];  % 拆成两个
-        elseif RR(i) >2.5*medRR
-            fixedRR = [fixedRR, RR(i)/3,RR(i)/3, RR(i)/3]; % 拆成三个
-        else
-            fixedRR = [fixedRR, RR(i)];
+        medRR = median(RR);
+        fixedRR = [];
+        for i = 1:numel(RR)
+            if RR(i) > 1.5*medRR & RR(i) <2.5*medRR
+                fixedRR = [fixedRR, RR(i)/2, RR(i)/2];  % 拆成两个
+            elseif RR(i) >2.5*medRR
+                fixedRR = [fixedRR, RR(i)/3,RR(i)/3, RR(i)/3]; % 拆成三个
+            else
+                fixedRR = [fixedRR, RR(i)];
+            end
         end
-    end
-    RR = fixedRR;
+        RR = fixedRR;
 
  
         % let's calculate the weighted average of the RR
@@ -396,153 +396,153 @@ end
 
 
 
-%%done with the heart rate calculation
+    %%done with the heart rate calculation
 
 
 
-%% starting with the xyz calculation
+    %% starting with the xyz calculation
 
-alpha_now = 0.8;        % 当前测量的权重（你要的 0.7）
-alpha_prev = 1 - alpha_now;   % 上一帧估计的权重（=0.3）
+    alpha_now = 0.8;        % 当前测量的权重（你要的 0.7）
+    alpha_prev = 1 - alpha_now;   % 上一帧估计的权重（=0.3）
 
-xyz = MPS
+    xyz = MPS
 
-prev_xyz2 = prev_xyz % used for calculating the velocity
-
-
-
-xyz = alpha_now * MPS + alpha_prev * prev_xyz;  % Update current position estimate
-prev_xyz = xyz;
+    prev_xyz2 = prev_xyz % used for calculating the velocity
 
 
 
-xyz(1) = max(1, min(512, xyz(1)));   % 限制 x 在 [1,512]
-xyz(2) = max(1, min(512, xyz(2)));   % 限制 y 在 [1,512]
-xyz(3) = max(0, xyz(3));             % 限制 z >= 0
-
-
-% done with the xyz calculating
-
-
-%%% doing the calculation on the direction
+    xyz = alpha_now * MPS + alpha_prev * prev_xyz;  % Update current position estimate
+    prev_xyz = xyz;
 
 
 
-
-%%% CALCULATION FOR the angle
-
-alpha_rg = 0.2;
-alpha_rg_prev = 1 - alpha_rg;
-
-if isempty(Rg_lp), Rg_lp = Rg; end
-Rg_lp = alpha_rg*Rg + (1-alpha_rg)*Rg_lp;
+    xyz(1) = max(1, min(512, xyz(1)));   % 限制 x 在 [1,512]
+    xyz(2) = max(1, min(512, xyz(2)));   % 限制 y 在 [1,512]
+    xyz(3) = max(0, xyz(3));             % 限制 z >= 0
 
 
-%% ===== Direction estimation (complementary fusion) =====
-gamma_yaw = 0.35;    % 越大越信位移方向（0.2~0.5）
-min_step  = 0.25;    % 只有位移>0.25m才纠偏，防抖动误导
+    % done with the xyz calculating
 
-if idx ==0
-    theta_prev = 0;
-    pos_for_dir = xyz;
-end
+
+    %%% doing the calculation on the direction
 
 
 
-% 1) 陀螺积分（短期基准）
-theta_gyro = theta_prev + Rg_lp;
-theta_gyro = atan2(sin(theta_gyro), cos(theta_gyro));  % wrap 到 [-pi,pi]
 
-% 2) 位移角（长期参考，只在移动够大时使用）
-disp_vec = xyz(1:2) - pos_for_dir(1:2);
-if norm(disp_vec) > min_step
-    theta_disp = atan2(disp_vec(2), disp_vec(1));
-    % 在圆上做加权平均（避免角度跳变问题）
-    theta = atan2( ...
-              (1-gamma_yaw)*sin(theta_gyro) + gamma_yaw*sin(theta_disp), ...
-              (1-gamma_yaw)*cos(theta_gyro) + gamma_yaw*cos(theta_disp) );
-    pos_for_dir = xyz;                 % 只有纠偏时才更新锚点
-else
-    theta = theta_gyro;
-end
+    %%% CALCULATION FOR the angle
 
-% 3) 输出单位方向向量
-di = [cos(theta)  sin(theta)];
-theta_prev = theta;
+    alpha_rg = 0.2;
+    alpha_rg_prev = 1 - alpha_rg;
+
+    if isempty(Rg_lp), Rg_lp = Rg; end
+    Rg_lp = alpha_rg*Rg + (1-alpha_rg)*Rg_lp;
 
 
-%% KF VEL =====
+    %% ===== Direction estimation (complementary fusion) =====
+    gamma_yaw = 0.35;    % 越大越信位移方向（0.2~0.5）
+    min_step  = 0.25;    % 只有位移>0.25m才纠偏，防抖动误导
+
+    if idx ==0
+        theta_prev = 0;
+        pos_for_dir = xyz;
+    end
 
 
-% 初始化
-if idx <= 4
-    % 前两帧固定 10 km/h，同时用此速度初始化 KF 状态
-    vel = 10;
-    if isempty(xKF)
-        v0   = 10/3.6;                          % m/s
-        dir0 = [cos(theta_prev), sin(theta_prev), 0];
-        xKF  = [MPS(:); (v0*dir0(:))];
-        PKF  = diag([R(1,1) R(2,2) R(3,3)  100 100 100]);
-        vel_lp = vel;
+
+    % 1) 陀螺积分（短期基准）
+    theta_gyro = theta_prev + Rg_lp;
+    theta_gyro = atan2(sin(theta_gyro), cos(theta_gyro));  % wrap 到 [-pi,pi]
+
+    % 2) 位移角（长期参考，只在移动够大时使用）
+    disp_vec = xyz(1:2) - pos_for_dir(1:2);
+    if norm(disp_vec) > min_step
+        theta_disp = atan2(disp_vec(2), disp_vec(1));
+        % 在圆上做加权平均（避免角度跳变问题）
+        theta = atan2( ...
+            (1-gamma_yaw)*sin(theta_gyro) + gamma_yaw*sin(theta_disp), ...
+            (1-gamma_yaw)*cos(theta_gyro) + gamma_yaw*cos(theta_disp) );
+        pos_for_dir = xyz;                 % 只有纠偏时才更新锚点
     else
-        % 第二帧保持 vel=10，但仍然让 KF 跟踪位置（更新）
+        theta = theta_gyro;
+    end
+
+    % 3) 输出单位方向向量
+    di = [cos(theta)  sin(theta)];
+    theta_prev = theta;
+
+
+    %% KF VEL =====
+
+
+    % 初始化
+    if idx <= 4
+        % 前两帧固定 10 km/h，同时用此速度初始化 KF 状态
+        vel = 10;
+        if isempty(xKF)
+            v0   = 10/3.6;                          % m/s
+            dir0 = [cos(theta_prev), sin(theta_prev), 0];
+            xKF  = [MPS(:); (v0*dir0(:))];
+            PKF  = diag([R(1,1) R(2,2) R(3,3)  100 100 100]);
+            vel_lp = vel;
+        else
+            % 第二帧保持 vel=10，但仍然让 KF 跟踪位置（更新）
+            x_pred = F * xKF;   P_pred = F * PKF * F' + Q;
+            z = MPS(:); y = z - H*x_pred; S = H*P_pred*H' + R;
+            K = P_pred*H'/S;
+            xKF = x_pred + K*y; PKF = (I6-K*H)*P_pred;
+            vel_lp = vel;       % 保持平滑器
+        end
+        xyz = xKF(1:3)';
+    else
+        % 第 3 帧起：标准 KF
+        % 预测
         x_pred = F * xKF;   P_pred = F * PKF * F' + Q;
+        % 更新（仅位置）
         z = MPS(:); y = z - H*x_pred; S = H*P_pred*H' + R;
         K = P_pred*H'/S;
         xKF = x_pred + K*y; PKF = (I6-K*H)*P_pred;
-        vel_lp = vel;       % 保持平滑器
+
+        % 输出
+        xyz = xKF(1:3)';                 % KF 位置
+        vxy   = hypot(xKF(4), xKF(5));
+        vel_raw = vxy * 3.6;
+        vel     = beta_vel*vel_raw + (1-beta_vel)*vel_lp;
+        vel_lp  = vel;
+        if vel < VEL_MIN || vel > VEL_MAX
+            target_kmh = min(max(vel, VEL_MIN), VEL_MAX);
+            % vxy_safe   = max(vxy, 1e-6);                 % 避免除零
+            % scale      = (target_kmh/3.6) / vxy_safe;
+            % xKF(4:5)   = xKF(4:5) * scale;               % 只缩放水平速度，保持 vz 不变
+            vel        = target_kmh;                     % 输出与状态一致
+        end
     end
-    xyz = xKF(1:3)';
-else
-    % 第 3 帧起：标准 KF
-    % 预测
-    x_pred = F * xKF;   P_pred = F * PKF * F' + Q;
-    % 更新（仅位置）
-    z = MPS(:); y = z - H*x_pred; S = H*P_pred*H' + R;
-    K = P_pred*H'/S;
-    xKF = x_pred + K*y; PKF = (I6-K*H)*P_pred;
-
-    % 输出
-    xyz = xKF(1:3)';                 % KF 位置
-    vxy   = hypot(xKF(4), xKF(5));
-    vel_raw = vxy * 3.6;
-    vel     = beta_vel*vel_raw + (1-beta_vel)*vel_lp;
-    vel_lp  = vel;
-    if vel < VEL_MIN || vel > VEL_MAX
-        target_kmh = min(max(vel, VEL_MIN), VEL_MAX);
-        % vxy_safe   = max(vxy, 1e-6);                 % 避免除零
-        % scale      = (target_kmh/3.6) / vxy_safe;
-        % xKF(4:5)   = xKF(4:5) * scale;               % 只缩放水平速度，保持 vz 不变
-        vel        = target_kmh;                     % 输出与状态一致
-    end
-end
 
 
 
-xyz = xyz(:)';                     % 行向量
-if ~all(isfinite(xyz)), xyz = MPS; end
-xyz(1) = min(max(xyz(1), 1), 512);
-xyz(2) = min(max(xyz(2), 1), 512);
-xyz(3) = max(0, xyz(3)); 
+    xyz = xyz(:)';                     % 行向量
+    if ~all(isfinite(xyz)), xyz = MPS; end
+    xyz(1) = min(max(xyz(1), 1), 512);
+    xyz(2) = min(max(xyz(2), 1), 512);
+    xyz(3) = max(0, xyz(3));
 
 
-%% TODO: Hardcode base on rover physical specs
+    %% TODO: Hardcode base on rover physical specs
 
-%% END VEL
-disp({xyz,hr,di,vel})
+    %% END VEL
+    disp({xyz,hr,di,vel})
 
     disp(idx)
 
 
-  
- %%%%%%%%%%%%%%%%%%  DO NOT CHANGE ANY CODE BELOW THIS LINE %%%%%%%%%%%%%%%%%%%%%
- % Let's use the simulation script to plot your estimates against the real values
- % of the quantities of interest and obtain error measures - notice we ignore the
- % returned XYZ, HRSt, and Rg values since they're the same we got above.
- [t1,t2,t3,xyzRMS,velRMS,angRMS,hrRMS]=Sim1(map, xyz,hr,di,vel);
 
- 
- idx=idx+1; 
+    %%%%%%%%%%%%%%%%%%  DO NOT CHANGE ANY CODE BELOW THIS LINE %%%%%%%%%%%%%%%%%%%%%
+    % Let's use the simulation script to plot your estimates against the real values
+    % of the quantities of interest and obtain error measures - notice we ignore the
+    % returned XYZ, HRSt, and Rg values since they're the same we got above.
+    [t1,t2,t3,xyzRMS,velRMS,angRMS,hrRMS]=Sim1(map, xyz,hr,di,vel);
+
+
+    idx=idx+1;
 end;
 beep;
 
