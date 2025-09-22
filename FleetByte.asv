@@ -266,14 +266,17 @@ while(idx<=secs)               %% Main simulation loop
 
 fs = 120
 
- % predo
-ecg = HRS(:);                 
-ecg = movmedian(ecg, 5);      
+ % -------- 预处理 --------
+ecg = HRS(:);                 % 保证是列向量（1200x1）
+ecg = movmedian(ecg, 5);      % 用窗口=5的中值滤波去掉尖峰噪声
+% ecg = normalize(ecg);         % 归一化信号到 [-1,1]，方便设阈值
 
-
+% -------- 检测波峰 --------
+% 阈值设为中位数 + 0.5*标准差（自适应阈值，避免固定阈值带来的问题）
 th = median(ecg) + 0.5*std(ecg);
 
-
+% 设置相邻两个峰的最小间隔，0.25 秒 ≈ 240 bpm 的上限
+% （避免一个 QRS 波被分成多个峰）
 minDist = round(0.25 * fs);
 
 pks = [];
@@ -289,39 +292,45 @@ N = length(ecg)
 
 
 
-
+% 输入：x, h, d
+% 输出：pks, locs
 
 
 % implemtnt the find peaks through the hand roke 
-x2 =ecg(:);
-h = th
+
+x = ecg(:); 
+h = th% 列向量
 d =minDist
-N = length(x2);
+N = length(x);
 pks  = [];
 locs = [];
 
+x2 =x
 
-
+% --------- Step 1: 找所有候选峰（含平台） ----------
 cand_pks  = [];
 cand_locs = [];
-% doin hte loop
+
 i = 2;
 while i <= N-1
+    % NaN 邻域不作峰，跳过
+    if ~isfinite(x2(i-1)) || ~isfinite(x2(i)) || ~isfinite(x2(i+1))
+        i = i + 1; continue;
+    end
 
-
-    if x2(i-1) < x2(i)             
-        s = i; e = i;              
+    if x2(i-1) < x2(i)             % 上升沿
+        s = i; e = i;              % 平台起止
         while e < N && isfinite(x2(e)) && x2(e) == x2(e+1)
-            e = e + 1;             
+            e = e + 1;             % 扩展平台
         end
-        if e < N && x2(e) > x2(e+1)   
-            loc = floor((s + e)/2);   
+        if e < N && x2(e) > x2(e+1)   % 右侧下降，确认局部极大（含平台）
+            loc = floor((s + e)/2);   % 平顶中点
             pk  = x2(loc);
-            if pk >= h               
+            if pk >= h                % MinPeakHeight: 用 ≥
                 cand_locs(end+1) = loc;
                 cand_pks(end+1)  = pk;
             end
-            i = e + 1;               
+            i = e + 1;                % 跳过平台
             continue;
         end
     end
@@ -382,7 +391,7 @@ if numel(locs) >= 2
         % let's calculate the weighted average of the RR
 
         N = numel(RR);
-        alpha = 2;         % adjusting the weight function
+        alpha = 2;         % 调节参数，1=线性, 2=平方，越大越陡
         W = (1:N).^alpha;
 
 
