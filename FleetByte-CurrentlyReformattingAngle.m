@@ -409,22 +409,22 @@ end
 
 theta_gyro = theta_prev + Rg_lp; %guess by combining prev angle by the smoothed/weighted measurement
 theta_gyro = atan2(sin(theta_gyro), cos(theta_gyro));  %prevent the angle from going out of bounds of -pi to pi as this already covers a full circle
-%Can't take avg as + and - values might actually mean the same thing
+%Can't take avg as + and - values might actually mean the same thing, use
+%sin/cos to get around this
 
-% 2) 位移角（长期参考，只在移动够大时使用）
-disp_vec = xyz(1:2) - pos_for_dir(1:2);
-if norm(disp_vec) > min_dist_delta_boundary
-    theta_disp = atan2(disp_vec(2), disp_vec(1));
-    % 在圆上做加权平均（避免角度跳变问题）
-    theta = atan2( ...
-              (1-alpha_disp)*sin(theta_gyro) + gamma_yaw*sin(theta_disp), ...
-              (1-alpha_disp)*cos(theta_gyro) + gamma_yaw*cos(theta_disp) );
-    pos_for_dir = xyz;                 % 只有纠偏时才更新锚点
+%actual angle calc from position
+disp_vec = xyz(1:2) - pos_for_dir(1:2); %net change
+if norm(disp_vec) > min_dist_delta_boundary %if the dist changed enough
+    theta_disp = atan2(disp_vec(2), disp_vec(1)); %Same thing as before kinda
+    
+    %Beautiful one liner
+    theta = atan2((1-alpha_disp)*sin(theta_gyro) + alpha_disp*sin(theta_disp), (1-alpha_disp)*cos(theta_gyro) + alpha_disp*cos(theta_disp) );
+    pos_for_dir = xyz; %update prev loc
 else
-    theta = theta_gyro;
+    theta = theta_gyro; %Not enough change, just use data from the gyro sensor
 end
 
-% 3) 输出单位方向向量
+%final math stuff, sin and cos guarantee the norm is 1
 di = [cos(theta)  sin(theta)];
 theta_prev = theta;
 
