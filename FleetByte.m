@@ -156,8 +156,8 @@ H = [1 0 0 0 0 0;
      0 0 1 0 0 0];
 
 % 噪声参数（建议值，可微调）
-sigma_meas = 3;                         % MPS 位置测量噪声（米）
-sigma_acc  = 1.5;                         % 过程噪声（m/s^2）
+sigma_meas = 3;                         % Larger means less trust in MPS
+sigma_acc  = 0.2;                         % Larger means more erratic motion
 
 % 过程噪声 Q、测量噪声 R
 Q = sigma_acc^2 * [ (dt^4)/4 0         0         (dt^3)/2 0        0;
@@ -173,14 +173,10 @@ I6 = eye(6);
 xKF   = [];                               % 6x1: [x y z vx vy vz]'
 PKF   = [];                               % 6x6 协方差
 
-% 速度的指数平滑（可选）
-vel_lp = [];                              
-beta_vel = 0.2;                           % 0.15~0.3 之间都行
-
+beta_vel = 1;
 VEL_MIN = 5;
 VEL_MAX = 15;
 %% END VEL
-
 %%%%%%%%%% ... AND THIS LINE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 idx=1;
@@ -405,11 +401,11 @@ di = [cos(theta)  sin(theta)];
 theta_prev = theta;
 
 
-%% ===== 3D Kalman Filter for position & velocity =====
+%% KF VEL =====
 
 
 % 初始化
-if idx <= 8
+if idx <= 4
     % 前两帧固定 10 km/h，同时用此速度初始化 KF 状态
     vel = 10;
     if isempty(xKF)
@@ -438,15 +434,17 @@ else
 
     % 输出
     xyz = xKF(1:3)';                 % KF 位置
-    vel = norm(xKF(4:6)) * 3.6;      % km/h
-    vel = beta_vel*vel + (1-beta_vel)*vel_lp;  % EMA
+    vxy   = hypot(xKF(4), xKF(5));
+    vel_raw = vxy * 3.6;
+    vel     = beta_vel*vel_raw + (1-beta_vel)*vel_lp;
+    vel_lp  = vel;
     if vel < VEL_MIN || vel > VEL_MAX
         target_kmh = min(max(vel, VEL_MIN), VEL_MAX);
-        scale = (target_kmh/3.6) / max(norm(xKF(4:6)), 1e-6);
-        xKF(4:6) = xKF(4:6) * scale;   % 缩放速度分量
-        vel = target_kmh;               % 输出也用缩放后的
+        % vxy_safe   = max(vxy, 1e-6);                 % 避免除零
+        % scale      = (target_kmh/3.6) / vxy_safe;
+        % xKF(4:5)   = xKF(4:5) * scale;               % 只缩放水平速度，保持 vz 不变
+        vel        = target_kmh;                     % 输出与状态一致
     end
-    vel_lp = vel;
 end
 
 
