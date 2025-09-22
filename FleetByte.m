@@ -139,10 +139,11 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
     theta_prev = 0
     pos_for_dir = [0, 0, 0]
     alpha = 2; % 调节参数，1=线性, 2=平方，越大越陡 used for the calculation on the weight of heart rate
-    %% VEL
-    dt = 1; % 采样周期（仿真就是 1 s）
 
-    % 状态转移 & 观测矩阵
+    %% VEL INIT
+    dt = 1;
+
+    % State Transition
     F = [1 0 0 dt 0 0;
          0 1 0 0 dt 0;
          0 0 1 0 0 dt;
@@ -150,32 +151,36 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
          0 0 0 0 1 0;
          0 0 0 0 0 1];
 
+    % Observation
     H = [1 0 0 0 0 0;
          0 1 0 0 0 0;
          0 0 1 0 0 0];
 
-    % 噪声参数（建议值，可微调）
-    sigma_meas = 3; % Larger means less trust in MPS
-    sigma_acc = 0.2; % Larger means more erratic motion
+    % Noise para
+    sigma_meas = 3; % Larger -> less trust in MPS
+    sigma_acc = 0.4; % Larger -> more aggressive acc change
 
-    % 过程噪声 Q、测量噪声 R
+    % Measurement Noise Covariance
+    R = (sigma_meas ^ 2) * eye(3);
+
+    % Process Noise Covariance
     Q = sigma_acc ^ 2 * [(dt ^ 4) / 4 0 0 (dt ^ 3) / 2 0 0;
                          0 (dt ^ 4) / 4 0 0 (dt ^ 3) / 2 0;
                          0 0 (dt ^ 4) / 4 0 0 (dt ^ 3) / 2;
                          (dt ^ 3) / 2 0 0 dt ^ 2 0 0;
                          0 (dt ^ 3) / 2 0 0 dt ^ 2 0;
                          0 0 (dt ^ 3) / 2 0 0 dt ^ 2];
-    R = (sigma_meas ^ 2) * eye(3);
     I6 = eye(6);
 
-    % KF 容器（空表示尚未初始化）
-    xKF = []; % 6x1: [x y z vx vy vz]'
-    PKF = []; % 6x6 协方差
+    % KF vars
+    xKF = []; % 6x1 [x y z vx vy vz]'
+    PKF = []; % 6x6 cov
 
-    beta_vel = 1;
-    VEL_MIN = 5;
+    beta_vel = 0.8; % ! unused
+    VEL_MIN = 5; % hardcode based on Sim1 specs
     VEL_MAX = 15;
-    %% END VEL
+    %% END VEL INIT
+
     %%%%%%%%%% ... AND THIS LINE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     idx = 1;
@@ -444,56 +449,40 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
         di = [cos(theta) sin(theta)];
         theta_prev = theta;
 
-        %% KF VEL =====
+        %% VEL ITER
+        if isempty(xKF)
+            % v0   = 10/3.6;  % observed init speed
+            dir0 = [cos(theta_prev), sin(theta_prev), 0];
+            xKF = [MPS(:); (0 * dir0(:))]; % dont know dir
+            PKF = diag([R(1, 1) R(2, 2) R(3, 3) 25 25 25]);
+            vel_lp = vel;
 
-        % 初始化
-        if idx <= 4
-            % 前两帧固定 10 km/h，同时用此速度初始化 KF 状态
-            vel = 10;
-
-            if isempty(xKF)
-                v0 = 10/3.6; % m/s
-                dir0 = [cos(theta_prev), sin(theta_prev), 0];
-                xKF = [MPS(:); (v0 * dir0(:))];
-                PKF = diag([R(1, 1) R(2, 2) R(3, 3) 100 100 100]);
-                vel_lp = vel;
-            else
-                % 第二帧保持 vel=10，但仍然让 KF 跟踪位置（更新）
-                x_pred = F * xKF; P_pred = F * PKF * F' + Q;
-                z = MPS(:); y = z - H * x_pred; S = H * P_pred * H' + R;
-                K = P_pred * H' / S;
-                xKF = x_pred + K * y; PKF = (I6 - K * H) * P_pred;
-                vel_lp = vel; % 保持平滑器
-            end
-
-            xyz = xKF(1:3)';
         else
-            % 第 3 帧起：标准 KF
-            % 预测
+            % KF predict & update
             x_pred = F * xKF; P_pred = F * PKF * F' + Q;
-            % 更新（仅位置）
             z = MPS(:); y = z - H * x_pred; S = H * P_pred * H' + R;
             K = P_pred * H' / S;
             xKF = x_pred + K * y; PKF = (I6 - K * H) * P_pred;
 
-            % 输出
-            xyz = xKF(1:3)'; % KF 位置
+            % Output
+            xyz = xKF(1:3)';
             vxy = hypot(xKF(4), xKF(5));
             vel_raw = vxy * 3.6;
             vel = beta_vel * vel_raw + (1 - beta_vel) * vel_lp;
+
+            if idx <= 4
+                vel = 10;
+            end
+
             vel_lp = vel;
 
             if vel < VEL_MIN || vel > VEL_MAX
-                target_kmh = min(max(vel, VEL_MIN), VEL_MAX);
-                % vxy_safe   = max(vxy, 1e-6);                 % 避免除零
-                % scale      = (target_kmh/3.6) / vxy_safe;
-                % xKF(4:5)   = xKF(4:5) * scale;               % 只缩放水平速度，保持 vz 不变
-                vel = target_kmh; % 输出与状态一致
+                vel = min(max(vel, VEL_MIN), VEL_MAX);
             end
 
         end
 
-        xyz = xyz(:)'; % 行向量
+        xyz = xyz(:)';
         if ~all(isfinite(xyz)), xyz = MPS; end
         xyz(1) = min(max(xyz(1), 1), 512);
         xyz(2) = min(max(xyz(2), 1), 512);
@@ -501,7 +490,8 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
 
         %% TODO: Hardcode base on rover physical specs
 
-        %% END VEL
+        %% END VEL ITER
+
         disp({xyz, hr, di, vel})
 
         disp(idx)
