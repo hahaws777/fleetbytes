@@ -1,4 +1,4 @@
-ttt%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CSC C85 - Fundamentals of Robotics and Automated Systems
 % UTSC - Fall 2021
 %
@@ -263,16 +263,19 @@ while(idx<=secs)               %% Main simulation loop
 
 
  %% dealing with the heart rate calculation
-% pre do with the signals and the heart rate
+
 fs = 120
 
+ % -------- 预处理 --------
+ecg = HRS(:);                 % 保证是列向量（1200x1）
+ecg = movmedian(ecg, 5);      % 用窗口=5的中值滤波去掉尖峰噪声
+% ecg = normalize(ecg);         % 归一化信号到 [-1,1]，方便设阈值
 
-ecg = HRS(:);                 
-ecg = movmedian(ecg, 5);      
+% -------- 检测波峰 --------
 % settin the threshold
 th = median(ecg) + 0.5*std(ecg);
 
-% setting the distance between two peaks
+% setting the distance between the
 minDist = round(0.25 * fs);
 
 pks = [];
@@ -280,10 +283,10 @@ locs = [];
 N = length(ecg)
 
 
-% % applying the find peaks > minDist
+% % 找峰：大于阈值，且相邻峰间隔 > minDist
 % [pks, locs] = findpeaks(ecg, ...
-%         'MinPeakHeight', th, ...     
-%         'MinPeakDistance', minDist); 
+%         'MinPeakHeight', th, ...      % 峰值最低高度
+%         'MinPeakDistance', minDist);  % 峰之间的最小采样点距离
 
 
 
@@ -391,7 +394,7 @@ end
 
     RR_weighted = sum(RR .* W)/sum(W)
         
- 
+        % 如果筛选后还有有效 RR
      hr = 60 / RR_weighted;     
 
 
