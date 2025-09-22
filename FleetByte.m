@@ -269,7 +269,7 @@ fs = 120
  % -------- 预处理 --------
 ecg = HRS(:);                 % 保证是列向量（1200x1）
 ecg = movmedian(ecg, 5);      % 用窗口=5的中值滤波去掉尖峰噪声
-ecg = normalize(ecg);         % 归一化信号到 [-1,1]，方便设阈值
+% ecg = normalize(ecg);         % 归一化信号到 [-1,1]，方便设阈值
 
 % -------- 检测波峰 --------
 % 阈值设为中位数 + 0.5*标准差（自适应阈值，避免固定阈值带来的问题）
@@ -279,10 +279,95 @@ th = median(ecg) + 0.5*std(ecg);
 % （避免一个 QRS 波被分成多个峰）
 minDist = round(0.25 * fs);
 
-% 找峰：大于阈值，且相邻峰间隔 > minDist
-[pks, locs] = findpeaks(ecg, ...
-        'MinPeakHeight', th, ...      % 峰值最低高度
-        'MinPeakDistance', minDist);  % 峰之间的最小采样点距离
+pks = [];
+locs = [];
+N = length(ecg)
+
+
+% % 找峰：大于阈值，且相邻峰间隔 > minDist
+% [pks, locs] = findpeaks(ecg, ...
+%         'MinPeakHeight', th, ...      % 峰值最低高度
+%         'MinPeakDistance', minDist);  % 峰之间的最小采样点距离
+
+
+
+
+% 输入：x, h, d
+% 输出：pks, locs
+
+
+% implemtnt the find peaks through the hand roke 
+
+x = ecg(:); 
+h = th% 列向量
+d =minDist
+N = length(x);
+pks  = [];
+locs = [];
+
+x2 =x
+
+% --------- Step 1: 找所有候选峰（含平台） ----------
+cand_pks  = [];
+cand_locs = [];
+
+i = 2;
+while i <= N-1
+    % NaN 邻域不作峰，跳过
+    if ~isfinite(x2(i-1)) || ~isfinite(x2(i)) || ~isfinite(x2(i+1))
+        i = i + 1; continue;
+    end
+
+    if x2(i-1) < x2(i)             % 上升沿
+        s = i; e = i;              % 平台起止
+        while e < N && isfinite(x2(e)) && x2(e) == x2(e+1)
+            e = e + 1;             % 扩展平台
+        end
+        if e < N && x2(e) > x2(e+1)   % 右侧下降，确认局部极大（含平台）
+            loc = floor((s + e)/2);   % 平顶中点
+            pk  = x2(loc);
+            if pk >= h                % MinPeakHeight: 用 ≥
+                cand_locs(end+1) = loc;
+                cand_pks(end+1)  = pk;
+            end
+            i = e + 1;                % 跳过平台
+            continue;
+        end
+    end
+    i = i + 1;
+end
+
+% 没候选直接结束
+if isempty(cand_locs)
+    pks = []; locs = [];
+else
+    % --------- Step 3: 排序（pk 降序，loc 升序） ----------
+    [~, order] = sortrows([-cand_pks(:), cand_locs(:)]); 
+    cand_locs = cand_locs(order);
+    cand_pks  = cand_pks(order);
+
+    % --------- Step 4: 执行 MinPeakDistance 抑制 ----------
+    sel_locs = [];
+    sel_pks  = [];
+    for k = 1:numel(cand_locs)
+        loc_k = cand_locs(k);
+        pk_k  = cand_pks(k);
+
+        if isempty(sel_locs) || all(abs(loc_k - sel_locs) >= d)  % 允许 == d
+            sel_locs(end+1) = loc_k;
+            sel_pks(end+1)  = pk_k;
+        end
+    end
+
+    % --------- Step 5: 输出按位置升序 ----------
+    [locs, perm] = sort(sel_locs, 'ascend');
+    pks = sel_pks(perm);
+end
+
+
+
+
+
 
 % -------- 计算心率 --------
 if numel(locs) >= 2               % 至少要有两个峰才能计算 RR 间期
