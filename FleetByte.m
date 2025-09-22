@@ -138,7 +138,7 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
 
     theta_prev = 0
     pos_for_dir = [0, 0, 0]
-    alpha = 2; % 调节参数，1=线性, 2=平方，越大越陡 used for the calculation on the weight of heart rate
+    alpha = 2;
 
     %% VEL INIT
     dt = 1;
@@ -256,9 +256,9 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
             pause;
         end;
 
-        %%% SOLUTION:
+        %% SOLUTION:
 
-        %% dealing with the heart rate calculation
+        %% HR
         % pre do with the signals and the heart rate
         fs = 120
 
@@ -279,19 +279,16 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
         %         'MinPeakHeight', th, ...
         %         'MinPeakDistance', minDist);
 
-        % 输入：x, h, d
-        % 输出：pks, locs
-
-        % implemtnt the find peaks through the hand roke
+        % implement the find peaks
 
         x2 = ecg(:);
-        h = th
-        d = minDist
+        h = th;
+        d = minDist;
         N = length(x2);
         pks = [];
         locs = [];
 
-        % --------- Step 1: finding the candidates ----------
+        % Step 1: finding the candidates
         cand_pks = [];
         cand_locs = [];
 
@@ -353,9 +350,9 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
             pks = sel_pks(perm);
         end
 
-        % -------- for the hr --------
+        % for the hr
 
-        RR = diff(locs) / fs; % peeak difference
+        RR = diff(locs) / fs; % peak difference
         %  trusted interval for the heart tare difference
         RR = RR(RR > 0.25 & RR < 2);
         % for rr, we will fix it by adding another place of bump if the
@@ -388,68 +385,9 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
 
         hr = 60 / RR_weighted;
 
-        %%done with the heart rate calculation
+        %% END HR
 
-        %% starting with the xyz calculation
-
-        alpha_now = 0.8; % 当前测量的权重（你要的 0.7）
-        alpha_prev = 1 - alpha_now; % 上一帧估计的权重（=0.3）
-
-        xyz = MPS
-
-        prev_xyz2 = prev_xyz % used for calculating the velocity
-
-        xyz = alpha_now * MPS + alpha_prev * prev_xyz; % Update current position estimate
-        prev_xyz = xyz;
-
-        xyz(1) = max(1, min(512, xyz(1))); % 限制 x 在 [1,512]
-        xyz(2) = max(1, min(512, xyz(2))); % 限制 y 在 [1,512]
-        xyz(3) = max(0, xyz(3)); % 限制 z >= 0
-
-        % done with the xyz calculating
-
-        %%% doing the calculation on the direction
-
-        %%% CALCULATION FOR the angle
-
-        alpha_rg = 0.2;
-        alpha_rg_prev = 1 - alpha_rg;
-
-        if isempty(Rg_lp), Rg_lp = Rg; end
-        Rg_lp = alpha_rg * Rg + (1 - alpha_rg) * Rg_lp;
-
-        %% ===== Direction estimation (complementary fusion) =====
-        gamma_yaw = 0.35; % 越大越信位移方向（0.2~0.5）
-        min_step = 0.25; % 只有位移>0.25m才纠偏，防抖动误导
-
-        if idx == 0
-            theta_prev = 0;
-            pos_for_dir = xyz;
-        end
-
-        % 1) 陀螺积分（短期基准）
-        theta_gyro = theta_prev + Rg_lp;
-        theta_gyro = atan2(sin(theta_gyro), cos(theta_gyro)); % wrap 到 [-pi,pi]
-
-        % 2) 位移角（长期参考，只在移动够大时使用）
-        disp_vec = xyz(1:2) - pos_for_dir(1:2);
-
-        if norm(disp_vec) > min_step
-            theta_disp = atan2(disp_vec(2), disp_vec(1));
-            % 在圆上做加权平均（避免角度跳变问题）
-            theta = atan2( ...
-                (1 - gamma_yaw) * sin(theta_gyro) + gamma_yaw * sin(theta_disp), ...
-                (1 - gamma_yaw) * cos(theta_gyro) + gamma_yaw * cos(theta_disp));
-            pos_for_dir = xyz; % 只有纠偏时才更新锚点
-        else
-            theta = theta_gyro;
-        end
-
-        % 3) 输出单位方向向量
-        di = [cos(theta) sin(theta)];
-        theta_prev = theta;
-
-        %% VEL ITER
+        %% VEL
         if isempty(xKF)
             % v0   = 10/3.6;  % observed init speed
             dir0 = [cos(theta_prev), sin(theta_prev), 0];
@@ -490,7 +428,47 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
 
         %% TODO: Hardcode base on rover physical specs
 
-        %% END VEL ITER
+        %% END VEL
+
+        %% DIRECTION
+
+        alpha_rg = 0.2;
+        alpha_rg_prev = 1 - alpha_rg;
+
+        if isempty(Rg_lp), Rg_lp = Rg; end
+        Rg_lp = alpha_rg * Rg + (1 - alpha_rg) * Rg_lp;
+
+        % Direction estimation
+        gamma_yaw = 0.35; % confidence in XYZ
+        min_step = 0.25; % debounce threshold
+
+        if idx == 0
+            theta_prev = 0;
+            pos_for_dir = xyz;
+        end
+
+        % Gyro (Short-term Reference)
+        theta_gyro = theta_prev + Rg_lp;
+        theta_gyro = atan2(sin(theta_gyro), cos(theta_gyro)); % wrap 到 [-pi,pi]
+
+        % Displacement Angle (Long-term Reference)
+        disp_vec = xyz(1:2) - pos_for_dir(1:2);
+
+        if norm(disp_vec) > min_step
+            theta_disp = atan2(disp_vec(2), disp_vec(1));
+            theta = atan2( ...
+                (1 - gamma_yaw) * sin(theta_gyro) + gamma_yaw * sin(theta_disp), ...
+                (1 - gamma_yaw) * cos(theta_gyro) + gamma_yaw * cos(theta_disp));
+            pos_for_dir = xyz;
+        else
+            theta = theta_gyro;
+        end
+
+        % Output
+        di = [cos(theta) sin(theta)];
+        theta_prev = theta;
+
+        %% END DIRECTION
 
         disp({xyz, hr, di, vel})
 
