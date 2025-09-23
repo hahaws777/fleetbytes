@@ -159,8 +159,8 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
          0 0 1 0 0 0];
 
     % Noise para
-    sigma_meas = 3; % Larger -> less trust in MPS
-    sigma_acc = 0.4; % Larger -> more aggressive acc change
+    sigma_meas = 1.5; % Larger -> less trust in MPS
+    sigma_acc = 0.6; % Larger -> more aggressive acc change
 
     % Measurement Noise Covariance
     R = (sigma_meas ^ 2) * eye(3);
@@ -178,7 +178,7 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
     xKF = []; % 6x1 [x y z vx vy vz]'
     PKF = []; % 6x6 cov
 
-    beta_vel = 0.8; % ! unused
+    beta_vel = 0.8;
     VEL_MIN = 5; % hardcode based on Sim1 specs
     VEL_MAX = 15;
     %% END VEL INIT
@@ -395,7 +395,7 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
             dir0 = [cos(theta_prev), sin(theta_prev), 0];
             xKF = [MPS(:); (0 * dir0(:))]; % dont know dir
             PKF = diag([R(1, 1) R(2, 2) R(3, 3) 25 25 25]);
-            vel_lp = vel;
+            vel_prev = vel;
 
         else
             % KF predict & update
@@ -408,24 +408,21 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
             xyz = xKF(1:3)';
             vxy = hypot(xKF(4), xKF(5));
             vel_raw = vxy * 3.6;
-            vel = beta_vel * vel_raw + (1 - beta_vel) * vel_lp;
+            vel = beta_vel * vel_raw + (1 - beta_vel) * vel_prev;
 
             if idx <= 4
                 vel = 10;
             end
 
-            vel_lp = vel;
-
             if vel < VEL_MIN || vel > VEL_MAX
                 vel = min(max(vel, VEL_MIN), VEL_MAX);
             end
-            if abs(vel-vel_prev) > 2.5
-                vel  = (1.2*vel+0.8*vel_prev)/2
+
+            if abs(vel - vel_prev) > 2.5
+                vel = (.5 * vel + .5 * vel_prev);
             end
 
-
-
-            vel_prev = vel
+            vel_prev = vel;
 
         end
 
