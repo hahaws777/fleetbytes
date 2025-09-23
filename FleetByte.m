@@ -134,6 +134,8 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
 
     vel_prev = 10
 
+    hr_prev = 72
+
     Rg_lp = 0
 
     theta_prev = 0
@@ -417,6 +419,13 @@ function [xyzRMS, velRMS, angRMS, hrRMS] = FleetByte(secs, map, deb)
             if vel < VEL_MIN || vel > VEL_MAX
                 vel = min(max(vel, VEL_MIN), VEL_MAX);
             end
+            if abs(vel-vel_prev) > 2.5
+                vel  = (1.2*vel+0.8*vel_prev)/2
+            end
+
+
+
+            vel_prev = vel
 
         end
 
